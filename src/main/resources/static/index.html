@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Management Portal</title>
+    <style>
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --accent-color: #38bdf8;
+        --text-color: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: #334155;
+        --btn-hover: #0284c7;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        max-width: 900px;
+        width: 100%;
+      }
+
+      header {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--accent-color);
+        font-size: 1.8rem;
+      }
+
+      p.subtitle {
+        margin: 0.5rem 0 0 0;
+        color: var(--text-muted);
+      }
+
+      .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      input {
+        background-color: #0f172a;
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 0.75rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+
+      input:focus {
+        outline: None;
+        border-color: var(--accent-color);
+      }
+
+      button {
+        background-color: var(--accent-color);
+        color: #0f172a;
+        font-weight: bold;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      button:hover {
+        background-color: var(--btn-hover);
+        color: #ffffff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+
+      .badge {
+        background-color: rgba(56, 189, 248, 0.1);
+        color: var(--accent-color);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Customer Management Portal</h1>
+        <p class="subtitle">Spring Boot + Docker Microservice</p>
+      </header>
+
+      <!-- Create Customer Form -->
+      <div class="card">
+        <h3>Add New Customer</h3>
+        <form id="customerForm">
+          <div class="form-grid">
+            <input
+              type="text"
+              id="custId"
+              placeholder="Customer ID (e.g. 101)"
+              required
+            />
+            <input type="text" id="custName" placeholder="Full Name" required />
+            <input
+              type="email"
+              id="custEmail"
+              placeholder="Email Address"
+              required
+            />
+          </div>
+          <button type="submit">Create Customer</button>
+        </form>
+      </div>
+
+      <!-- Customer List Table -->
+      <div class="card">
+        <h3>Customer Directory</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody id="customerTableBody">
+            <!-- Data populated dynamically via Fetch API -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "/customers";
+
+      // Fetch and display customers on page load
+      async function loadCustomers() {
+        try {
+          const response = await fetch(API_URL);
+          const customers = await response.json();
+          const tableBody = document.getElementById("customerTableBody");
+
+          tableBody.innerHTML = customers
+            .map(
+              (cust) => `
+                <tr>
+                    <td><span class="badge">#${cust.id}</span></td>
+                    <td>${cust.name}</td>
+                    <td>${cust.email}</td>
+                </tr>
+            `,
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error fetching customers:", error);
+        }
+      }
+
+      // Submit new customer via POST request
+      document
+        .getElementById("customerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const customerData = {
+            id: document.getElementById("custId").value,
+            name: document.getElementById("custName").value,
+            email: document.getElementById("custEmail").value,
+          };
+
+          try {
+            const response = await fetch(API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(customerData),
+            });
+
+            if (response.ok) {
+              document.getElementById("customerForm").reset();
+              loadCustomers(); // Refresh table
+            }
+          } catch (error) {
+            console.error("Error creating customer:", error);
+          }
+        });
+
+      // Initial Load
+      loadCustomers();
+    </script>
+  </body>
+</html>
