@@ -23,10 +23,15 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.IMAGE-NAME }}:${{ env.IMAGE-TAG }} \
-          -t ${{ env.IMAGE-NAME }}:latest \
-          ./maven-app
-      - name: Push Docker image
+          docker build \
+            -t $IMAGE_NAME:$IMAGE_TAG \
+            -t $IMAGE_NAME:latest \
+            ./maven-app
+
+      - name: Push versioned image
         run: |
-          docker push ${{ env.IMAGE-NAME }}:${{ env.IMAGE-TAG }}
-          docker push ${{ env.IMAGE-NAME }}:latest
+          docker push $IMAGE_NAME:$IMAGE_TAG
+
+      - name: Push latest image
+        run: |
+          docker push $IMAGE_NAME:latest
