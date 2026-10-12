@@ -8,8 +8,8 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      IMAGE-NAME: ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
-      IMAGE-TAG: ${{ github.sha }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/maven-app
+      IMAGE_TAG: ${{ github.sha }}
 
     steps:
       - name: Checkout repository
