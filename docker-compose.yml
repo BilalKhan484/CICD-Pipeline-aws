@@ -21,7 +21,7 @@ services:
 
   # Spring Boot REST API Service
   api:
-    image: new-img:latest
+    image: bilal998/maven-app:latest
     container_name: springapi-container
     restart: always
     ports:

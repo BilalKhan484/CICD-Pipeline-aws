@@ -1,0 +1,32 @@
+name: CI/CD Docker Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE-NAME: ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
+      IMAGE-TAG: ${{ github.sha }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.IMAGE-NAME }}:${{ env.IMAGE-TAG }} \
+          -t ${{ env.IMAGE-NAME }}:latest \
+          ./maven-app
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.IMAGE-NAME }}:${{ env.IMAGE-TAG }}
+          docker push ${{ env.IMAGE-NAME }}:latest
