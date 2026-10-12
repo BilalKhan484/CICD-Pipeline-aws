@@ -26,7 +26,7 @@ jobs:
           docker build \
             -t ${{ env.DOCKER_IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
             -t ${{ env.DOCKER_IMAGE_NAME }}:latest \
-            ./maven-app
+            .
 
       - name: Push versioned image
         run: |
