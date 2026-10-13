@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.logcl
+# Secrets
+.env
+*.pem
+
+# AWS CLI installation files
+/aws/
