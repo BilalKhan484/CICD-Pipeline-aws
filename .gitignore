@@ -45,3 +45,4 @@ crash.logcl
 
 # AWS CLI installation files
 /aws/
+/awscliv2.zip
